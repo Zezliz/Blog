@@ -1,0 +1,252 @@
+---
+title: "Arrow Functions trong JavaScript: Viết code ngắn gọn hơn"
+description: "Tìm hiểu về arrow functions - cú pháp mới giúp viết function ngắn gọn và hiểu rõ về this binding"
+image: "/images/blog/arrow-functions.svg"
+date: "2024-12-07"
+author: "Nguyen Thai Dat"
+published: true
+---
+
+Arrow functions là một tính năng quan trọng của ES6+, giúp viết code ngắn gọn hơn và xử lý `this` binding một cách tự nhiên.
+
+## Cú pháp cơ bản
+
+### Function thông thường vs Arrow Function
+
+```javascript
+// Function thông thường
+function add(a, b) {
+  return a + b;
+}
+
+// Arrow function
+const add = (a, b) => {
+  return a + b;
+};
+
+// Arrow function ngắn gọn (khi chỉ có một biểu thức)
+const add = (a, b) => a + b;
+```
+
+## Các dạng Arrow Function
+
+### Một tham số
+
+```javascript
+// Không cần dấu ngoặc đơn
+const square = x => x * x;
+
+// Tương đương với
+const square = (x) => x * x;
+```
+
+### Nhiều tham số
+
+```javascript
+const multiply = (a, b, c) => a * b * c;
+```
+
+### Không có tham số
+
+```javascript
+const greet = () => "Xin chào!";
+```
+
+### Nhiều dòng
+
+```javascript
+const processData = (data) => {
+  const processed = data.map(item => item * 2);
+  return processed.filter(item => item > 10);
+};
+```
+
+## Return Object Literal
+
+Khi return object, cần dùng dấu ngoặc đơn:
+
+```javascript
+// SAI
+const createUser = (name, age) => { name, age };
+
+// ĐÚNG
+const createUser = (name, age) => ({ name, age });
+
+console.log(createUser("Dat", 25)); // { name: "Dat", age: 25 }
+```
+
+## This Binding
+
+Điểm khác biệt quan trọng nhất là cách xử lý `this`:
+
+### Function thông thường
+
+```javascript
+const person = {
+  name: "Dat",
+  hobbies: ["Đọc sách", "Lập trình"],
+  
+  showHobbies: function() {
+    this.hobbies.forEach(function(hobby) {
+      console.log(`${this.name} thích ${hobby}`);
+      // Lỗi! this.name là undefined
+    });
+  }
+};
+```
+
+### Arrow Function
+
+```javascript
+const person = {
+  name: "Dat",
+  hobbies: ["Đọc sách", "Lập trình"],
+  
+  showHobbies: function() {
+    this.hobbies.forEach((hobby) => {
+      console.log(`${this.name} thích ${hobby}`);
+      // Hoạt động đúng! this.name = "Dat"
+    });
+  }
+};
+
+person.showHobbies();
+// "Dat thích Đọc sách"
+// "Dat thích Lập trình"
+```
+
+## Sử dụng với Array Methods
+
+Arrow functions rất phù hợp với các phương thức mảng:
+
+```javascript
+const numbers = [1, 2, 3, 4, 5];
+
+// map
+const doubled = numbers.map(n => n * 2);
+
+// filter
+const evens = numbers.filter(n => n % 2 === 0);
+
+// reduce
+const sum = numbers.reduce((acc, n) => acc + n, 0);
+
+// forEach
+numbers.forEach(n => console.log(n));
+```
+
+## Ví dụ thực tế
+
+### Event Handlers
+
+```javascript
+// Với arrow function
+button.addEventListener('click', () => {
+  console.log('Button được click');
+});
+
+// Với function thông thường
+button.addEventListener('click', function() {
+  console.log('Button được click');
+});
+```
+
+### Callbacks
+
+```javascript
+// setTimeout
+setTimeout(() => {
+  console.log('Sau 1 giây');
+}, 1000);
+
+// Promise
+fetch('/api/data')
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.error(error));
+```
+
+### Higher-Order Functions
+
+```javascript
+function createMultiplier(multiplier) {
+  return (number) => number * multiplier;
+}
+
+const double = createMultiplier(2);
+const triple = createMultiplier(3);
+
+console.log(double(5)); // 10
+console.log(triple(5)); // 15
+```
+
+## Khi nào không nên dùng Arrow Function
+
+### 1. Object Methods
+
+```javascript
+const person = {
+  name: "Dat",
+  // SAI - this sẽ không trỏ đến person
+  greet: () => {
+    console.log(`Xin chào, tôi là ${this.name}`);
+  }
+};
+
+// ĐÚNG
+const person = {
+  name: "Dat",
+  greet: function() {
+    console.log(`Xin chào, tôi là ${this.name}`);
+  }
+};
+```
+
+### 2. Prototype Methods
+
+```javascript
+// SAI
+Array.prototype.last = () => this[this.length - 1];
+
+// ĐÚNG
+Array.prototype.last = function() {
+  return this[this.length - 1];
+};
+```
+
+### 3. Constructors
+
+Arrow functions không thể dùng làm constructor:
+
+```javascript
+// SAI - sẽ lỗi
+const Person = (name) => {
+  this.name = name;
+};
+
+// ĐÚNG
+function Person(name) {
+  this.name = name;
+}
+```
+
+## So sánh với Function thông thường
+
+| Đặc điểm | Function thông thường | Arrow Function |
+|----------|----------------------|----------------|
+| `this` binding | Dynamic | Lexical (từ scope cha) |
+| Arguments object | Có | Không |
+| Constructor | Có thể | Không thể |
+| Hoisting | Có | Không |
+
+## Best Practices
+
+1. **Sử dụng arrow functions** cho callbacks và array methods
+2. **Không dùng arrow functions** cho object methods khi cần `this`
+3. **Sử dụng arrow functions** khi cần giữ nguyên `this` từ scope cha
+4. **Chọn function thông thường** khi cần hoisting hoặc constructor
+
+## Kết luận
+
+Arrow functions là một công cụ mạnh mẽ giúp code ngắn gọn và dễ đọc hơn. Hiểu rõ cách chúng hoạt động, đặc biệt là về `this` binding, sẽ giúp bạn sử dụng chúng hiệu quả.
+

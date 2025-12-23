@@ -1,0 +1,279 @@
+---
+title: "This Binding trong JavaScript: Hiểu rõ để tránh lỗi"
+description: "Tìm hiểu về this trong JavaScript - cách nó hoạt động, các cách binding và cách tránh các lỗi thường gặp"
+image: "/images/blog/this-binding.svg"
+date: "2024-12-10"
+author: "Nguyen Thai Dat"
+published: true
+---
+
+`this` là một trong những khái niệm khó hiểu nhất trong JavaScript. Trong bài viết này, chúng ta sẽ tìm hiểu cách `this` hoạt động và các cách binding.
+
+## This là gì?
+
+`this` là một từ khóa đặc biệt trong JavaScript, nó trỏ đến object đang thực thi function. Giá trị của `this` phụ thuộc vào cách function được gọi.
+
+## Các cách Binding This
+
+### 1. Default Binding
+
+Khi function được gọi độc lập, `this` trỏ đến global object (window trong browser, global trong Node.js):
+
+```javascript
+function showThis() {
+  console.log(this); // window (trong browser)
+}
+
+showThis();
+```
+
+Trong strict mode, `this` sẽ là `undefined`:
+
+```javascript
+'use strict';
+function showThis() {
+  console.log(this); // undefined
+}
+
+showThis();
+```
+
+### 2. Implicit Binding
+
+Khi function được gọi như một method của object, `this` trỏ đến object đó:
+
+```javascript
+const person = {
+  name: "Nguyen Thai Dat",
+  greet: function() {
+    console.log(`Xin chào, tôi là ${this.name}`);
+  }
+};
+
+person.greet(); // "Xin chào, tôi là Nguyen Thai Dat"
+```
+
+### 3. Explicit Binding
+
+Sử dụng `call()`, `apply()`, hoặc `bind()` để chỉ định `this`:
+
+```javascript
+function greet() {
+  console.log(`Xin chào, tôi là ${this.name}`);
+}
+
+const person1 = { name: "Dat" };
+const person2 = { name: "Nam" };
+
+// call() - gọi function với this cụ thể
+greet.call(person1); // "Xin chào, tôi là Dat"
+greet.call(person2); // "Xin chào, tôi là Nam"
+
+// apply() - tương tự call() nhưng nhận array làm arguments
+greet.apply(person1);
+
+// bind() - tạo function mới với this được bind
+const greetDat = greet.bind(person1);
+greetDat(); // "Xin chào, tôi là Dat"
+```
+
+### 4. New Binding
+
+Khi function được gọi với `new`, `this` trỏ đến object mới được tạo:
+
+```javascript
+function Person(name) {
+  this.name = name;
+  this.greet = function() {
+    console.log(`Xin chào, tôi là ${this.name}`);
+  };
+}
+
+const person = new Person("Dat");
+person.greet(); // "Xin chào, tôi là Dat"
+```
+
+## Arrow Functions và This
+
+Arrow functions không có `this` riêng, chúng kế thừa `this` từ scope cha (lexical this):
+
+```javascript
+const person = {
+  name: "Dat",
+  hobbies: ["Đọc sách", "Lập trình"],
+  
+  // Function thông thường - this thay đổi
+  showHobbiesOld: function() {
+    this.hobbies.forEach(function(hobby) {
+      console.log(`${this.name} thích ${hobby}`);
+      // Lỗi! this.name là undefined
+    });
+  },
+  
+  // Arrow function - this giữ nguyên
+  showHobbiesNew: function() {
+    this.hobbies.forEach((hobby) => {
+      console.log(`${this.name} thích ${hobby}`);
+      // Hoạt động đúng! this.name = "Dat"
+    });
+  }
+};
+
+person.showHobbiesNew();
+// "Dat thích Đọc sách"
+// "Dat thích Lập trình"
+```
+
+## Vấn đề thường gặp
+
+### Mất this trong Callback
+
+```javascript
+const button = {
+  text: "Click me",
+  click: function() {
+    console.log(this.text); // "Click me"
+    
+    // Vấn đề - mất this
+    setTimeout(function() {
+      console.log(this.text); // undefined
+    }, 1000);
+    
+    // Giải pháp 1: Arrow function
+    setTimeout(() => {
+      console.log(this.text); // "Click me"
+    }, 1000);
+    
+    // Giải pháp 2: Bind
+    setTimeout(function() {
+      console.log(this.text);
+    }.bind(this), 1000);
+    
+    // Giải pháp 3: Lưu this vào biến
+    const self = this;
+    setTimeout(function() {
+      console.log(self.text); // "Click me"
+    }, 1000);
+  }
+};
+```
+
+### Mất this khi gán Method
+
+```javascript
+const person = {
+  name: "Dat",
+  greet: function() {
+    console.log(`Xin chào, tôi là ${this.name}`);
+  }
+};
+
+// Mất this
+const greetFunction = person.greet;
+greetFunction(); // undefined (hoặc lỗi trong strict mode)
+
+// Giữ this với bind
+const boundGreet = person.greet.bind(person);
+boundGreet(); // "Xin chào, tôi là Dat"
+```
+
+## Các phương thức hữu ích
+
+### Call với Arguments
+
+```javascript
+function introduce(greeting, punctuation) {
+  console.log(`${greeting}, tôi là ${this.name}${punctuation}`);
+}
+
+const person = { name: "Dat" };
+introduce.call(person, "Xin chào", "!"); // "Xin chào, tôi là Dat!"
+```
+
+### Apply với Array Arguments
+
+```javascript
+function introduce(greeting, punctuation) {
+  console.log(`${greeting}, tôi là ${this.name}${punctuation}`);
+}
+
+const person = { name: "Dat" };
+introduce.apply(person, ["Xin chào", "!"]); // "Xin chào, tôi là Dat!"
+
+// Hữu ích với Math.max
+const numbers = [5, 6, 2, 3, 7];
+const max = Math.max.apply(null, numbers);
+// Hoặc với spread operator
+const max2 = Math.max(...numbers);
+```
+
+### Bind để tạo Function mới
+
+```javascript
+class Button {
+  constructor(text) {
+    this.text = text;
+  }
+  
+  click() {
+    console.log(`Button "${this.text}" được click`);
+  }
+}
+
+const button = new Button("Submit");
+const clickHandler = button.click.bind(button);
+
+// Có thể truyền vào event listener
+document.addEventListener('click', clickHandler);
+```
+
+## Best Practices
+
+### 1. Sử dụng Arrow Functions cho Callbacks
+
+```javascript
+// Tốt
+this.items.forEach(item => {
+  this.process(item);
+});
+
+// Tránh
+this.items.forEach(function(item) {
+  this.process(item); // this có thể không đúng
+});
+```
+
+### 2. Sử dụng Bind khi cần
+
+```javascript
+class Component {
+  constructor() {
+    this.handleClick = this.handleClick.bind(this);
+  }
+  
+  handleClick() {
+    console.log(this); // Luôn trỏ đến Component instance
+  }
+}
+```
+
+### 3. Sử dụng Arrow Functions trong Class Methods
+
+```javascript
+class Component {
+  handleClick = () => {
+    console.log(this); // Luôn trỏ đến Component instance
+  }
+}
+```
+
+## Kết luận
+
+Hiểu rõ cách `this` hoạt động là rất quan trọng trong JavaScript. Hãy nhớ:
+- `this` phụ thuộc vào cách function được gọi
+- Arrow functions kế thừa `this` từ scope cha
+- Sử dụng `bind()`, `call()`, `apply()` để kiểm soát `this`
+- Cẩn thận với `this` trong callbacks và event handlers
+
+Nắm vững `this` sẽ giúp bạn tránh được nhiều lỗi và viết code JavaScript chuyên nghiệp hơn!
+

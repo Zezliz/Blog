@@ -1,0 +1,122 @@
+---
+title: "Giới thiệu về JavaScript ES6+ và các tính năng mới"
+description: "Khám phá các tính năng mạnh mẽ của JavaScript ES6+ như let/const, template literals, spread operator và nhiều hơn nữa"
+image: "/images/blog/es6-features.svg"
+date: "2024-12-01"
+author: "Nguyen Thai Dat"
+published: true
+---
+
+JavaScript ES6+ (ECMAScript 2015 và các phiên bản sau) đã mang đến nhiều tính năng mới giúp viết code dễ dàng và hiệu quả hơn. Trong bài viết này, chúng ta sẽ tìm hiểu về các tính năng quan trọng nhất.
+
+## Let và Const
+
+Trước ES6, chúng ta chỉ có `var` để khai báo biến. ES6+ giới thiệu `let` và `const`:
+
+```javascript
+// var - function scoped
+var x = 1;
+if (true) {
+  var x = 2; // cùng một biến x
+}
+console.log(x); // 2
+
+// let - block scoped
+let y = 1;
+if (true) {
+  let y = 2; // biến y khác
+}
+console.log(y); // 1
+
+// const - không thể gán lại
+const PI = 3.14159;
+// PI = 3.14; // Lỗi!
+```
+
+## Template Literals
+
+Template literals giúp tạo chuỗi dễ dàng hơn:
+
+```javascript
+const name = "Nguyen Thai Dat";
+const age = 25;
+
+// Cách cũ
+const message = "Xin chào, tôi là " + name + ", " + age + " tuổi";
+
+// Cách mới với template literals
+const messageNew = `Xin chào, tôi là ${name}, ${age} tuổi`;
+```
+
+## Arrow Functions
+
+Arrow functions giúp code ngắn gọn hơn:
+
+```javascript
+// Cách cũ
+const add = function(a, b) {
+  return a + b;
+};
+
+// Arrow function
+const addNew = (a, b) => a + b;
+
+// Với một tham số
+const square = x => x * x;
+
+// Với nhiều dòng
+const greet = (name) => {
+  const greeting = `Xin chào ${name}`;
+  return greeting;
+};
+```
+
+## Destructuring
+
+Destructuring giúp trích xuất giá trị từ objects và arrays:
+
+```javascript
+// Destructuring objects
+const person = { name: "Dat", age: 25, city: "Hanoi" };
+const { name, age } = person;
+console.log(name, age); // Dat 25
+
+// Destructuring arrays
+const numbers = [1, 2, 3, 4, 5];
+const [first, second, ...rest] = numbers;
+console.log(first, second, rest); // 1 2 [3, 4, 5]
+```
+
+## Spread Operator
+
+Spread operator giúp copy và merge arrays/objects:
+
+```javascript
+// Với arrays
+const arr1 = [1, 2, 3];
+const arr2 = [4, 5, 6];
+const combined = [...arr1, ...arr2]; // [1, 2, 3, 4, 5, 6]
+
+// Với objects
+const obj1 = { a: 1, b: 2 };
+const obj2 = { c: 3, d: 4 };
+const merged = { ...obj1, ...obj2 }; // { a: 1, b: 2, c: 3, d: 4 }
+```
+
+## Default Parameters
+
+Thiết lập giá trị mặc định cho tham số:
+
+```javascript
+function greet(name = "Khách", message = "Xin chào") {
+  return `${message}, ${name}!`;
+}
+
+console.log(greet()); // Xin chào, Khách!
+console.log(greet("Dat", "Chào bạn")); // Chào bạn, Dat!
+```
+
+## Kết luận
+
+ES6+ đã cách mạng hóa cách chúng ta viết JavaScript. Các tính năng này giúp code dễ đọc, dễ bảo trì và hiệu quả hơn. Hãy bắt đầu sử dụng chúng trong các dự án của bạn ngay hôm nay!
+

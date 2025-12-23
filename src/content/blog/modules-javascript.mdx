@@ -1,0 +1,288 @@
+---
+title: "Modules trong JavaScript: Tổ chức code chuyên nghiệp"
+description: "Học cách sử dụng ES6 modules để tổ chức code JavaScript thành các module riêng biệt, dễ quản lý và tái sử dụng"
+image: "/images/blog/modules.svg"
+date: "2024-12-08"
+author: "Nguyen Thai Dat"
+published: true
+---
+
+ES6 Modules là cách hiện đại để tổ chức code JavaScript thành các file riêng biệt, giúp code dễ quản lý, bảo trì và tái sử dụng.
+
+## Export và Import
+
+### Named Export
+
+```javascript
+// math.js
+export const PI = 3.14159;
+
+export function add(a, b) {
+  return a + b;
+}
+
+export function subtract(a, b) {
+  return a - b;
+}
+
+// Hoặc export ở cuối file
+const multiply = (a, b) => a * b;
+const divide = (a, b) => b !== 0 ? a / b : null;
+
+export { multiply, divide };
+```
+
+### Import Named Exports
+
+```javascript
+// main.js
+import { add, subtract, PI } from './math.js';
+
+console.log(add(5, 3)); // 8
+console.log(PI); // 3.14159
+
+// Import với alias
+import { add as sum, subtract as diff } from './math.js';
+
+// Import tất cả
+import * as math from './math.js';
+console.log(math.add(5, 3));
+```
+
+### Default Export
+
+```javascript
+// user.js
+class User {
+  constructor(name, email) {
+    this.name = name;
+    this.email = email;
+  }
+  
+  greet() {
+    return `Xin chào, tôi là ${this.name}`;
+  }
+}
+
+export default User;
+
+// Hoặc
+export default class User {
+  // ...
+}
+```
+
+### Import Default Export
+
+```javascript
+// main.js
+import User from './user.js';
+
+const user = new User("Dat", "dat@example.com");
+console.log(user.greet());
+```
+
+## Kết hợp Default và Named Exports
+
+```javascript
+// utils.js
+export const API_URL = 'https://api.example.com';
+
+export function formatDate(date) {
+  return date.toLocaleDateString('vi-VN');
+}
+
+export default function logger(message) {
+  console.log(`[LOG] ${message}`);
+}
+```
+
+```javascript
+// main.js
+import logger, { API_URL, formatDate } from './utils.js';
+
+logger('Ứng dụng đã khởi động');
+console.log(API_URL);
+console.log(formatDate(new Date()));
+```
+
+## Ví dụ thực tế
+
+### Tổ chức code với Modules
+
+```javascript
+// config/database.js
+export const dbConfig = {
+  host: 'localhost',
+  port: 5432,
+  database: 'myapp'
+};
+
+export function connect() {
+  console.log('Đang kết nối database...');
+}
+```
+
+```javascript
+// services/userService.js
+import { connect } from '../config/database.js';
+
+export async function getUserById(id) {
+  connect();
+  // Giả lập API call
+  return { id, name: "Dat", email: "dat@example.com" };
+}
+
+export async function getAllUsers() {
+  connect();
+  return [
+    { id: 1, name: "Dat" },
+    { id: 2, name: "Nam" }
+  ];
+}
+```
+
+```javascript
+// main.js
+import { getUserById, getAllUsers } from './services/userService.js';
+
+async function main() {
+  const user = await getUserById(1);
+  console.log(user);
+  
+  const users = await getAllUsers();
+  console.log(users);
+}
+
+main();
+```
+
+## Re-exporting
+
+Bạn có thể re-export từ module khác:
+
+```javascript
+// utils/index.js
+export { add, subtract } from './math.js';
+export { formatDate } from './date.js';
+export { validateEmail } from './validation.js';
+
+// Bây giờ có thể import tất cả từ index.js
+import { add, formatDate, validateEmail } from './utils/index.js';
+```
+
+## Dynamic Import
+
+Import module động khi cần:
+
+```javascript
+// Import động
+async function loadModule() {
+  const module = await import('./math.js');
+  console.log(module.add(2, 3));
+}
+
+// Hoặc với điều kiện
+if (condition) {
+  const { add } = await import('./math.js');
+  add(2, 3);
+}
+```
+
+## Module trong Browser
+
+Để sử dụng ES6 modules trong browser, thêm `type="module"`:
+
+```html
+<!-- index.html -->
+<script type="module" src="main.js"></script>
+```
+
+```javascript
+// main.js
+import { add } from './math.js';
+console.log(add(2, 3));
+```
+
+## Module trong Node.js
+
+Từ Node.js 12+, bạn có thể sử dụng ES6 modules:
+
+```json
+// package.json
+{
+  "type": "module"
+}
+```
+
+```javascript
+// main.js
+import { add } from './math.js';
+console.log(add(2, 3));
+```
+
+## Best Practices
+
+### 1. Tổ chức theo chức năng
+
+```
+src/
+  ├── components/
+  │   ├── Button.js
+  │   └── Card.js
+  ├── utils/
+  │   ├── helpers.js
+  │   └── constants.js
+  ├── services/
+  │   └── api.js
+  └── main.js
+```
+
+### 2. Sử dụng index.js để re-export
+
+```javascript
+// utils/index.js
+export * from './helpers.js';
+export * from './constants.js';
+```
+
+### 3. Tránh circular dependencies
+
+```javascript
+// SAI - circular dependency
+// a.js
+import { b } from './b.js';
+export const a = 'a';
+
+// b.js
+import { a } from './a.js';
+export const b = 'b';
+```
+
+### 4. Sử dụng default export cho main export
+
+```javascript
+// user.js
+export default class User {
+  // ...
+}
+
+// helpers.js - named exports
+export function validateEmail(email) {
+  // ...
+}
+```
+
+## So sánh với CommonJS
+
+| ES6 Modules | CommonJS |
+|-------------|----------|
+| `export` / `import` | `module.exports` / `require()` |
+| Static (compile-time) | Dynamic (runtime) |
+| Tree-shaking friendly | Không hỗ trợ tốt |
+| Top-level await | Không hỗ trợ |
+
+## Kết luận
+
+ES6 Modules là cách hiện đại và hiệu quả để tổ chức code JavaScript. Sử dụng chúng giúp code dễ quản lý, test và tái sử dụng hơn. Hãy bắt đầu sử dụng modules trong các dự án của bạn!
+

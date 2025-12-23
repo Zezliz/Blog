@@ -1,0 +1,214 @@
+---
+title: "Promises trong JavaScript: Xử lý bất đồng bộ hiệu quả"
+description: "Tìm hiểu về Promises trong JavaScript - cách tạo, sử dụng và xử lý các tác vụ bất đồng bộ một cách chuyên nghiệp"
+image: "/images/blog/promises.svg"
+date: "2024-12-05"
+author: "Nguyen Thai Dat"
+published: true
+---
+
+Promises là một cách mạnh mẽ để xử lý các tác vụ bất đồng bộ trong JavaScript. Chúng giúp tránh callback hell và làm code dễ đọc hơn.
+
+## Promise là gì?
+
+Promise đại diện cho một giá trị có thể chưa có sẵn ngay bây giờ, nhưng sẽ có trong tương lai. Promise có 3 trạng thái:
+
+- **Pending**: Đang chờ xử lý
+- **Fulfilled**: Đã hoàn thành thành công
+- **Rejected**: Đã thất bại
+
+## Tạo Promise
+
+### Cú pháp cơ bản
+
+```javascript
+const myPromise = new Promise((resolve, reject) => {
+  // Thực hiện tác vụ bất đồng bộ
+  const success = true;
+  
+  if (success) {
+    resolve("Thành công!");
+  } else {
+    reject("Thất bại!");
+  }
+});
+```
+
+### Ví dụ thực tế
+
+```javascript
+function fetchUserData(userId) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (userId > 0) {
+        resolve({
+          id: userId,
+          name: "Nguyen Thai Dat",
+          email: "dat@example.com"
+        });
+      } else {
+        reject("ID người dùng không hợp lệ");
+      }
+    }, 1000);
+  });
+}
+```
+
+## Sử dụng Promise
+
+### then() và catch()
+
+```javascript
+fetchUserData(1)
+  .then(user => {
+    console.log("Người dùng:", user);
+    return user.name;
+  })
+  .then(name => {
+    console.log("Tên:", name);
+  })
+  .catch(error => {
+    console.error("Lỗi:", error);
+  });
+```
+
+### finally()
+
+`finally()` luôn được thực thi, dù promise thành công hay thất bại:
+
+```javascript
+fetchUserData(1)
+  .then(user => console.log(user))
+  .catch(error => console.error(error))
+  .finally(() => {
+    console.log("Hoàn thành!");
+  });
+```
+
+## Promise.all() - Chờ nhiều promises
+
+Khi cần chờ nhiều promises cùng lúc:
+
+```javascript
+const promise1 = fetchUserData(1);
+const promise2 = fetchUserData(2);
+const promise3 = fetchUserData(3);
+
+Promise.all([promise1, promise2, promise3])
+  .then(users => {
+    console.log("Tất cả người dùng:", users);
+  })
+  .catch(error => {
+    console.error("Có lỗi xảy ra:", error);
+  });
+```
+
+## Promise.allSettled() - Chờ tất cả hoàn thành
+
+Khác với `Promise.all()`, `Promise.allSettled()` chờ tất cả promises hoàn thành, kể cả khi có lỗi:
+
+```javascript
+Promise.allSettled([promise1, promise2, promise3])
+  .then(results => {
+    results.forEach((result, index) => {
+      if (result.status === 'fulfilled') {
+        console.log(`Promise ${index + 1} thành công:`, result.value);
+      } else {
+        console.log(`Promise ${index + 1} thất bại:`, result.reason);
+      }
+    });
+  });
+```
+
+## Promise.race() - Lấy kết quả đầu tiên
+
+Trả về promise đầu tiên hoàn thành (thành công hoặc thất bại):
+
+```javascript
+const fastPromise = new Promise(resolve => setTimeout(() => resolve("Nhanh"), 100));
+const slowPromise = new Promise(resolve => setTimeout(() => resolve("Chậm"), 1000));
+
+Promise.race([fastPromise, slowPromise])
+  .then(result => {
+    console.log(result); // "Nhanh"
+  });
+```
+
+## Promise.resolve() và Promise.reject()
+
+Tạo promise đã được resolve hoặc reject ngay lập tức:
+
+```javascript
+// Tạo promise đã resolve
+const resolvedPromise = Promise.resolve("Giá trị");
+resolvedPromise.then(value => console.log(value)); // "Giá trị"
+
+// Tạo promise đã reject
+const rejectedPromise = Promise.reject("Lỗi");
+rejectedPromise.catch(error => console.error(error)); // "Lỗi"
+```
+
+## Ví dụ thực tế với Fetch API
+
+```javascript
+function fetchPosts() {
+  return fetch('https://api.example.com/posts')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log("Bài viết:", data);
+      return data;
+    })
+    .catch(error => {
+      console.error("Lỗi khi lấy bài viết:", error);
+      throw error;
+    });
+}
+
+// Sử dụng
+fetchPosts()
+  .then(posts => {
+    // Xử lý bài viết
+  });
+```
+
+## Chuyển đổi Callback sang Promise
+
+```javascript
+// Callback cũ
+function oldCallbackFunction(data, callback) {
+  setTimeout(() => {
+    callback(null, data);
+  }, 1000);
+}
+
+// Chuyển sang Promise
+function newPromiseFunction(data) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(data);
+    }, 1000);
+  });
+}
+
+// Sử dụng
+newPromiseFunction("Dữ liệu")
+  .then(result => console.log(result))
+  .catch(error => console.error(error));
+```
+
+## Best Practices
+
+1. **Luôn xử lý lỗi** với `.catch()`
+2. **Sử dụng Promise.all()** khi cần chờ nhiều promises
+3. **Tránh Promise hell** - sử dụng async/await nếu có thể
+4. **Return promises** trong then() để chain được
+
+## Kết luận
+
+Promises là nền tảng quan trọng để xử lý bất đồng bộ trong JavaScript. Hiểu rõ cách sử dụng chúng sẽ giúp bạn viết code tốt hơn và chuẩn bị tốt cho việc học async/await.
+

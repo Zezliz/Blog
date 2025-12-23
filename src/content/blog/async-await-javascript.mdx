@@ -1,0 +1,176 @@
+---
+title: "Async/Await trong JavaScript: Xử lý bất đồng bộ dễ dàng"
+description: "Tìm hiểu cách sử dụng async/await để xử lý các tác vụ bất đồng bộ trong JavaScript một cách rõ ràng và dễ hiểu"
+image: "/images/blog/async-await.svg"
+date: "2024-12-02"
+author: "Nguyen Thai Dat"
+published: true
+---
+
+Async/await là một cách hiện đại và dễ đọc để xử lý các tác vụ bất đồng bộ trong JavaScript. Nó giúp code trông giống như code đồng bộ nhưng vẫn hoạt động bất đồng bộ.
+
+## Vấn đề với Callbacks và Promises
+
+Trước khi có async/await, chúng ta phải xử lý bất đồng bộ bằng callbacks hoặc promises:
+
+```javascript
+// Callback hell
+fetchData(function(data) {
+  processData(data, function(result) {
+    saveData(result, function(saved) {
+      console.log("Đã lưu:", saved);
+    });
+  });
+});
+
+// Promises (tốt hơn nhưng vẫn phức tạp)
+fetchData()
+  .then(data => processData(data))
+  .then(result => saveData(result))
+  .then(saved => console.log("Đã lưu:", saved))
+  .catch(error => console.error("Lỗi:", error));
+```
+
+## Async/Await - Giải pháp
+
+Async/await làm cho code dễ đọc hơn nhiều:
+
+```javascript
+async function handleData() {
+  try {
+    const data = await fetchData();
+    const result = await processData(data);
+    const saved = await saveData(result);
+    console.log("Đã lưu:", saved);
+  } catch (error) {
+    console.error("Lỗi:", error);
+  }
+}
+```
+
+## Cách hoạt động
+
+### Async Function
+
+Một function được đánh dấu bằng `async` sẽ luôn trả về một Promise:
+
+```javascript
+async function getData() {
+  return "Dữ liệu";
+}
+
+// Tương đương với:
+function getData() {
+  return Promise.resolve("Dữ liệu");
+}
+```
+
+### Await
+
+`await` chỉ có thể được sử dụng bên trong `async` function. Nó chờ Promise được resolve:
+
+```javascript
+async function fetchUserData() {
+  const response = await fetch('https://api.example.com/user');
+  const data = await response.json();
+  return data;
+}
+```
+
+## Ví dụ thực tế
+
+### Fetch API với Async/Await
+
+```javascript
+async function getUserPosts(userId) {
+  try {
+    const response = await fetch(`https://api.example.com/users/${userId}/posts`);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const posts = await response.json();
+    return posts;
+  } catch (error) {
+    console.error("Lỗi khi lấy bài viết:", error);
+    return [];
+  }
+}
+
+// Sử dụng
+getUserPosts(1).then(posts => {
+  console.log("Bài viết:", posts);
+});
+```
+
+### Xử lý nhiều Promises song song
+
+Khi cần chờ nhiều promises cùng lúc, sử dụng `Promise.all`:
+
+```javascript
+async function fetchMultipleUsers() {
+  try {
+    const [user1, user2, user3] = await Promise.all([
+      fetch('https://api.example.com/users/1').then(r => r.json()),
+      fetch('https://api.example.com/users/2').then(r => r.json()),
+      fetch('https://api.example.com/users/3').then(r => r.json())
+    ]);
+    
+    return [user1, user2, user3];
+  } catch (error) {
+    console.error("Lỗi:", error);
+  }
+}
+```
+
+## Lỗi thường gặp
+
+### Quên await
+
+```javascript
+// SAI - trả về Promise thay vì giá trị
+async function getData() {
+  const data = fetch('/api/data'); // Thiếu await!
+  return data;
+}
+
+// ĐÚNG
+async function getData() {
+  const data = await fetch('/api/data');
+  return data;
+}
+```
+
+### Không xử lý lỗi
+
+```javascript
+// SAI - không có try/catch
+async function riskyOperation() {
+  const result = await mightFail();
+  return result;
+}
+
+// ĐÚNG
+async function riskyOperation() {
+  try {
+    const result = await mightFail();
+    return result;
+  } catch (error) {
+    console.error("Lỗi:", error);
+    throw error; // hoặc return giá trị mặc định
+  }
+}
+```
+
+## Best Practices
+
+1. **Luôn sử dụng try/catch** với async/await
+2. **Sử dụng Promise.all** khi cần chờ nhiều promises song song
+3. **Không lạm dụng await** - chỉ await khi thực sự cần
+4. **Xử lý lỗi một cách rõ ràng**
+
+## Kết luận
+
+Async/await là một công cụ mạnh mẽ giúp code bất đồng bộ dễ đọc và dễ bảo trì hơn. Hãy sử dụng nó trong các dự án của bạn để có trải nghiệm lập trình tốt hơn!
+

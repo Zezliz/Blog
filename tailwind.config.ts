@@ -22,7 +22,16 @@ const config = {
     },
     extend: {
       fontFamily: {
-        lexend: ["var(--font-lexend)", ...fontFamily.sans],
+        lexend: [
+          "var(--font-lexend)",
+          "system-ui",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "Segoe UI",
+          "Roboto",
+          "Arial",
+          "sans-serif",
+        ],
         code: ["var(--font-code)", ...fontFamily.sans],
       },
       colors: {
@@ -74,10 +83,51 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "gradient": {
+          "0%, 100%": {
+            "background-size": "200% 200%",
+            "background-position": "left center",
+          },
+          "50%": {
+            "background-size": "200% 200%",
+            "background-position": "right center",
+          },
+        },
+        shimmer: {
+          "0%": {
+            "background-position": "-200% center",
+          },
+          "100%": {
+            "background-position": "200% center",
+          },
+        },
+        fadeIn: {
+          "0%": {
+            opacity: "0",
+            transform: "translateY(-10px)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateY(0)",
+          },
+        },
+        fadeInUp: {
+          "0%": {
+            opacity: "0",
+            transform: "translateY(20px)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateY(0)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "gradient": "gradient 3s ease infinite",
+        "shimmer": "shimmer 2s linear infinite",
+        fadeInUp: "fadeInUp 0.35s ease-out",
       },
     },
   },

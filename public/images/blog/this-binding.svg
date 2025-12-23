@@ -1,0 +1,15 @@
+<svg width="804" height="452" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad10" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4ECDC4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#44A08D;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="804" height="452" fill="url(#grad10)"/>
+  <text x="402" y="200" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="white" text-anchor="middle">this</text>
+  <text x="402" y="250" font-family="Arial, sans-serif" font-size="32" fill="rgba(255,255,255,0.9)" text-anchor="middle">Binding</text>
+  <circle cx="402" cy="150" r="50" fill="none" stroke="white" stroke-width="4" opacity="0.6"/>
+  <circle cx="402" cy="150" r="30" fill="rgba(255,255,255,0.3)"/>
+</svg>
+
+

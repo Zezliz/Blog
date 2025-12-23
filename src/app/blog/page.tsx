@@ -7,7 +7,7 @@ import Link from "next/link";
 import { formatDate } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Blog",
+  title: "Bài viết",
 };
 
 export default function BlogPage() {
@@ -15,15 +15,15 @@ export default function BlogPage() {
     .filter((blog) => blog.published)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   return (
-    <div className="container max-w-4xl py-6 lg:py-10">
+    <div className="container max-w-7xl py-6 lg:py-10">
       <PageHeader
-        title="Blog"
-        description="A blog using velite. Posts are written in MDX"
+        title="Bài viết"
+        description="Những bài viết về lập trình, công nghệ và cuộc sống"
       />
       <hr className="my-8" />
 
       {blogs.length ? (
-        <div className="grid gap-10 sm:grid-cols-2">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {blogs.map((blog) => (
             <article
               key={blog.slug}
@@ -53,13 +53,13 @@ export default function BlogPage() {
               )}
 
               <Link href={blog.slug} className="absolute inset-0">
-                <span className="sr-only">View Article</span>
+                <span className="sr-only">Xem bài viết</span>
               </Link>
             </article>
           ))}
         </div>
       ) : (
-        <p>No Blogs found</p>
+        <p>Không tìm thấy bài viết nào</p>
       )}
     </div>
   );

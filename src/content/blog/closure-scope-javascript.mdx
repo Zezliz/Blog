@@ -1,0 +1,229 @@
+---
+title: "Closure và Scope trong JavaScript: Hiểu rõ để code tốt hơn"
+description: "Tìm hiểu về closure và scope trong JavaScript - những khái niệm quan trọng giúp bạn viết code JavaScript chuyên nghiệp"
+image: "/images/blog/closure-scope.svg"
+date: "2024-12-03"
+author: "Nguyen Thai Dat"
+published: true
+---
+
+Closure và Scope là hai khái niệm cơ bản nhưng quan trọng trong JavaScript. Hiểu rõ chúng sẽ giúp bạn tránh được nhiều lỗi và viết code tốt hơn.
+
+## Scope là gì?
+
+Scope xác định phạm vi truy cập của biến. JavaScript có 3 loại scope:
+
+### Global Scope
+
+Biến được khai báo bên ngoài function:
+
+```javascript
+const globalVar = "Tôi là biến global";
+
+function myFunction() {
+  console.log(globalVar); // Có thể truy cập
+}
+
+console.log(globalVar); // Có thể truy cập
+```
+
+### Function Scope
+
+Biến được khai báo bên trong function (với `var`):
+
+```javascript
+function myFunction() {
+  var functionVar = "Tôi là biến function";
+  console.log(functionVar); // Có thể truy cập
+}
+
+// console.log(functionVar); // Lỗi! Không thể truy cập
+```
+
+### Block Scope
+
+Biến được khai báo với `let` hoặc `const` trong block `{}`:
+
+```javascript
+if (true) {
+  let blockVar = "Tôi là biến block";
+  const anotherBlockVar = "Tôi cũng là biến block";
+  console.log(blockVar); // Có thể truy cập
+}
+
+// console.log(blockVar); // Lỗi! Không thể truy cập
+```
+
+## Closure là gì?
+
+Closure cho phép function bên trong truy cập biến của function bên ngoài, ngay cả sau khi function bên ngoài đã thực thi xong.
+
+### Ví dụ cơ bản
+
+```javascript
+function outerFunction() {
+  const outerVar = "Tôi là biến ngoài";
+  
+  function innerFunction() {
+    console.log(outerVar); // Truy cập được outerVar
+  }
+  
+  return innerFunction;
+}
+
+const myFunc = outerFunction();
+myFunc(); // "Tôi là biến ngoài"
+```
+
+## Ví dụ thực tế
+
+### Tạo Counter với Closure
+
+```javascript
+function createCounter() {
+  let count = 0;
+  
+  return {
+    increment: function() {
+      count++;
+      return count;
+    },
+    decrement: function() {
+      count--;
+      return count;
+    },
+    getCount: function() {
+      return count;
+    }
+  };
+}
+
+const counter1 = createCounter();
+const counter2 = createCounter();
+
+console.log(counter1.increment()); // 1
+console.log(counter1.increment()); // 2
+console.log(counter2.increment()); // 1 (độc lập với counter1)
+```
+
+### Module Pattern
+
+```javascript
+const calculator = (function() {
+  let result = 0;
+  
+  return {
+    add: function(x) {
+      result += x;
+      return this;
+    },
+    subtract: function(x) {
+      result -= x;
+      return this;
+    },
+    multiply: function(x) {
+      result *= x;
+      return this;
+    },
+    getResult: function() {
+      return result;
+    },
+    reset: function() {
+      result = 0;
+      return this;
+    }
+  };
+})();
+
+calculator.add(10).multiply(2).subtract(5);
+console.log(calculator.getResult()); // 15
+```
+
+## Vấn đề thường gặp
+
+### Loop với var
+
+```javascript
+// Vấn đề
+for (var i = 0; i < 3; i++) {
+  setTimeout(function() {
+    console.log(i); // In ra 3, 3, 3
+  }, 100);
+}
+
+// Giải pháp 1: Sử dụng let
+for (let i = 0; i < 3; i++) {
+  setTimeout(function() {
+    console.log(i); // In ra 0, 1, 2
+  }, 100);
+}
+
+// Giải pháp 2: Sử dụng IIFE
+for (var i = 0; i < 3; i++) {
+  (function(j) {
+    setTimeout(function() {
+      console.log(j); // In ra 0, 1, 2
+    }, 100);
+  })(i);
+}
+```
+
+## Ứng dụng thực tế
+
+### Event Handlers
+
+```javascript
+function setupButtons() {
+  const buttons = document.querySelectorAll('.button');
+  
+  buttons.forEach((button, index) => {
+    button.addEventListener('click', function() {
+      console.log(`Button ${index} được click`);
+      // Closure giúp truy cập được index
+    });
+  });
+}
+```
+
+### Data Privacy
+
+```javascript
+function createBankAccount(initialBalance) {
+  let balance = initialBalance; // Private variable
+  
+  return {
+    deposit: function(amount) {
+      balance += amount;
+      return balance;
+    },
+    withdraw: function(amount) {
+      if (amount <= balance) {
+        balance -= amount;
+        return balance;
+      }
+      return "Không đủ tiền";
+    },
+    getBalance: function() {
+      return balance;
+    }
+  };
+}
+
+const account = createBankAccount(1000);
+console.log(account.getBalance()); // 1000
+account.deposit(500);
+console.log(account.getBalance()); // 1500
+// Không thể truy cập trực tiếp balance từ bên ngoài
+```
+
+## Best Practices
+
+1. **Sử dụng `let` và `const`** thay vì `var` để tránh vấn đề scope
+2. **Hiểu rõ closure** để tận dụng tính năng này
+3. **Cẩn thận với memory leaks** - closure giữ reference đến biến
+4. **Sử dụng closure** để tạo private variables và methods
+
+## Kết luận
+
+Closure và Scope là những khái niệm cốt lõi của JavaScript. Hiểu rõ chúng sẽ giúp bạn viết code tốt hơn, tránh bugs và tận dụng tối đa sức mạnh của JavaScript.
+

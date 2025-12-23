@@ -1,0 +1,191 @@
+---
+title: "Array Methods trong JavaScript: Hướng dẫn toàn diện"
+description: "Khám phá các phương thức mạnh mẽ của Array trong JavaScript như map, filter, reduce và nhiều phương thức hữu ích khác"
+image: "/images/blog/array-methods.svg"
+date: "2024-12-04"
+author: "Nguyen Thai Dat"
+published: true
+---
+
+JavaScript cung cấp rất nhiều phương thức mạnh mẽ để làm việc với mảng. Trong bài viết này, chúng ta sẽ tìm hiểu các phương thức quan trọng nhất.
+
+## Các phương thức biến đổi mảng
+
+### map() - Biến đổi từng phần tử
+
+`map()` tạo một mảng mới với kết quả của việc gọi function cho từng phần tử:
+
+```javascript
+const numbers = [1, 2, 3, 4, 5];
+const doubled = numbers.map(num => num * 2);
+console.log(doubled); // [2, 4, 6, 8, 10]
+
+const users = [
+  { name: "Dat", age: 25 },
+  { name: "Nam", age: 30 }
+];
+const names = users.map(user => user.name);
+console.log(names); // ["Dat", "Nam"]
+```
+
+### filter() - Lọc phần tử
+
+`filter()` tạo một mảng mới với các phần tử thỏa mãn điều kiện:
+
+```javascript
+const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const evenNumbers = numbers.filter(num => num % 2 === 0);
+console.log(evenNumbers); // [2, 4, 6, 8, 10]
+
+const users = [
+  { name: "Dat", age: 25 },
+  { name: "Nam", age: 17 },
+  { name: "Lan", age: 20 }
+];
+const adults = users.filter(user => user.age >= 18);
+console.log(adults); // [{ name: "Dat", age: 25 }, { name: "Lan", age: 20 }]
+```
+
+### reduce() - Gộp thành một giá trị
+
+`reduce()` thực thi một reducer function trên mỗi phần tử, trả về một giá trị duy nhất:
+
+```javascript
+const numbers = [1, 2, 3, 4, 5];
+const sum = numbers.reduce((acc, num) => acc + num, 0);
+console.log(sum); // 15
+
+const users = [
+  { name: "Dat", score: 85 },
+  { name: "Nam", score: 90 },
+  { name: "Lan", score: 75 }
+];
+const totalScore = users.reduce((acc, user) => acc + user.score, 0);
+console.log(totalScore); // 250
+```
+
+## Tìm kiếm trong mảng
+
+### find() - Tìm phần tử đầu tiên
+
+```javascript
+const users = [
+  { id: 1, name: "Dat" },
+  { id: 2, name: "Nam" },
+  { id: 3, name: "Lan" }
+];
+const user = users.find(u => u.id === 2);
+console.log(user); // { id: 2, name: "Nam" }
+```
+
+### findIndex() - Tìm vị trí phần tử
+
+```javascript
+const numbers = [10, 20, 30, 40, 50];
+const index = numbers.findIndex(num => num > 25);
+console.log(index); // 2
+```
+
+### includes() - Kiểm tra tồn tại
+
+```javascript
+const fruits = ["táo", "chuối", "cam"];
+console.log(fruits.includes("chuối")); // true
+console.log(fruits.includes("nho")); // false
+```
+
+## Kiểm tra điều kiện
+
+### some() - Có ít nhất một phần tử thỏa mãn
+
+```javascript
+const numbers = [1, 2, 3, 4, 5];
+const hasEven = numbers.some(num => num % 2 === 0);
+console.log(hasEven); // true
+```
+
+### every() - Tất cả phần tử thỏa mãn
+
+```javascript
+const numbers = [2, 4, 6, 8];
+const allEven = numbers.every(num => num % 2 === 0);
+console.log(allEven); // true
+```
+
+## Sắp xếp và đảo ngược
+
+### sort() - Sắp xếp mảng
+
+```javascript
+const numbers = [3, 1, 4, 1, 5, 9, 2, 6];
+numbers.sort((a, b) => a - b); // Sắp xếp tăng dần
+console.log(numbers); // [1, 1, 2, 3, 4, 5, 6, 9]
+
+const users = [
+  { name: "Dat", age: 25 },
+  { name: "Nam", age: 30 },
+  { name: "Lan", age: 20 }
+];
+users.sort((a, b) => a.age - b.age);
+console.log(users); // Sắp xếp theo tuổi
+```
+
+### reverse() - Đảo ngược mảng
+
+```javascript
+const numbers = [1, 2, 3, 4, 5];
+numbers.reverse();
+console.log(numbers); // [5, 4, 3, 2, 1]
+```
+
+## Thêm và xóa phần tử
+
+### push() và pop()
+
+```javascript
+const fruits = ["táo", "chuối"];
+fruits.push("cam"); // Thêm vào cuối
+console.log(fruits); // ["táo", "chuối", "cam"]
+
+const last = fruits.pop(); // Xóa phần tử cuối
+console.log(last); // "cam"
+console.log(fruits); // ["táo", "chuối"]
+```
+
+### unshift() và shift()
+
+```javascript
+const fruits = ["chuối", "cam"];
+fruits.unshift("táo"); // Thêm vào đầu
+console.log(fruits); // ["táo", "chuối", "cam"]
+
+const first = fruits.shift(); // Xóa phần tử đầu
+console.log(first); // "táo"
+console.log(fruits); // ["chuối", "cam"]
+```
+
+## Kết hợp các phương thức
+
+Ví dụ thực tế kết hợp nhiều phương thức:
+
+```javascript
+const products = [
+  { name: "Laptop", price: 15000000, category: "Điện tử" },
+  { name: "Áo sơ mi", price: 500000, category: "Thời trang" },
+  { name: "Điện thoại", price: 10000000, category: "Điện tử" },
+  { name: "Quần jean", price: 800000, category: "Thời trang" }
+];
+
+// Lọc sản phẩm điện tử, giảm giá 10%, tính tổng
+const total = products
+  .filter(p => p.category === "Điện tử")
+  .map(p => ({ ...p, price: p.price * 0.9 }))
+  .reduce((sum, p) => sum + p.price, 0);
+
+console.log(total); // 22500000
+```
+
+## Kết luận
+
+Các phương thức mảng trong JavaScript rất mạnh mẽ và linh hoạt. Nắm vững chúng sẽ giúp bạn xử lý dữ liệu hiệu quả và viết code ngắn gọn hơn. Hãy thực hành thường xuyên để thành thạo!
+

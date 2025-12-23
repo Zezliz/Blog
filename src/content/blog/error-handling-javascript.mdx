@@ -1,0 +1,327 @@
+---
+title: "Error Handling trong JavaScript: Xử lý lỗi chuyên nghiệp"
+description: "Tìm hiểu các cách xử lý lỗi trong JavaScript từ try/catch cơ bản đến xử lý lỗi với Promises và async/await"
+image: "/images/blog/error-handling.svg"
+date: "2024-12-09"
+author: "Nguyen Thai Dat"
+published: true
+---
+
+Xử lý lỗi là một phần quan trọng trong lập trình. Trong bài viết này, chúng ta sẽ tìm hiểu các cách xử lý lỗi hiệu quả trong JavaScript.
+
+## Try/Catch cơ bản
+
+### Cú pháp
+
+```javascript
+try {
+  // Code có thể gây lỗi
+  const result = riskyOperation();
+  console.log(result);
+} catch (error) {
+  // Xử lý lỗi
+  console.error("Có lỗi xảy ra:", error.message);
+}
+```
+
+### Ví dụ
+
+```javascript
+function divide(a, b) {
+  if (b === 0) {
+    throw new Error("Không thể chia cho 0");
+  }
+  return a / b;
+}
+
+try {
+  const result = divide(10, 0);
+  console.log(result);
+} catch (error) {
+  console.error("Lỗi:", error.message); // "Lỗi: Không thể chia cho 0"
+}
+```
+
+## Finally Block
+
+`finally` luôn được thực thi, dù có lỗi hay không:
+
+```javascript
+try {
+  console.log("Bắt đầu");
+  const data = riskyOperation();
+  console.log("Thành công:", data);
+} catch (error) {
+  console.error("Lỗi:", error);
+} finally {
+  console.log("Luôn chạy phần này");
+  // Thường dùng để cleanup
+}
+```
+
+## Throw Error
+
+### Tạo Error tùy chỉnh
+
+```javascript
+function validateAge(age) {
+  if (age < 0) {
+    throw new Error("Tuổi không thể âm");
+  }
+  if (age > 150) {
+    throw new Error("Tuổi không hợp lệ");
+  }
+  return true;
+}
+
+try {
+  validateAge(-5);
+} catch (error) {
+  console.error(error.message);
+}
+```
+
+### Custom Error Classes
+
+```javascript
+class ValidationError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "ValidationError";
+  }
+}
+
+class NetworkError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "NetworkError";
+  }
+}
+
+function fetchData() {
+  // Giả lập lỗi
+  throw new NetworkError("Không thể kết nối đến server");
+}
+
+try {
+  fetchData();
+} catch (error) {
+  if (error instanceof NetworkError) {
+    console.error("Lỗi mạng:", error.message);
+  } else {
+    console.error("Lỗi khác:", error);
+  }
+}
+```
+
+## Xử lý lỗi với Promises
+
+### Catch trong Promise Chain
+
+```javascript
+fetch('/api/data')
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log("Dữ liệu:", data);
+  })
+  .catch(error => {
+    console.error("Lỗi:", error);
+  });
+```
+
+### Promise.all với Error Handling
+
+```javascript
+Promise.all([
+  fetch('/api/users'),
+  fetch('/api/posts'),
+  fetch('/api/comments')
+])
+  .then(responses => {
+    // Tất cả đều thành công
+    return Promise.all(responses.map(r => r.json()));
+  })
+  .catch(error => {
+    // Nếu một promise thất bại, tất cả đều thất bại
+    console.error("Có lỗi xảy ra:", error);
+  });
+```
+
+## Xử lý lỗi với Async/Await
+
+### Try/Catch với Async/Await
+
+```javascript
+async function fetchUserData(userId) {
+  try {
+    const response = await fetch(`/api/users/${userId}`);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const user = await response.json();
+    return user;
+  } catch (error) {
+    console.error("Lỗi khi lấy dữ liệu người dùng:", error);
+    // Có thể return giá trị mặc định
+    return null;
+  }
+}
+```
+
+### Xử lý nhiều async operations
+
+```javascript
+async function fetchAllData() {
+  try {
+    const [users, posts, comments] = await Promise.all([
+      fetch('/api/users').then(r => r.json()),
+      fetch('/api/posts').then(r => r.json()),
+      fetch('/api/comments').then(r => r.json())
+    ]);
+    
+    return { users, posts, comments };
+  } catch (error) {
+    console.error("Lỗi khi lấy dữ liệu:", error);
+    throw error; // Re-throw để caller xử lý
+  }
+}
+```
+
+## Error Boundaries trong React
+
+```javascript
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error("Lỗi:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <h1>Đã xảy ra lỗi. Vui lòng thử lại sau.</h1>;
+    }
+
+    return this.props.children;
+  }
+}
+
+// Sử dụng
+<ErrorBoundary>
+  <MyComponent />
+</ErrorBoundary>
+```
+
+## Global Error Handling
+
+### Window Error Handler
+
+```javascript
+window.addEventListener('error', (event) => {
+  console.error('Lỗi toàn cục:', event.error);
+  // Gửi lỗi đến logging service
+});
+
+window.addEventListener('unhandledrejection', (event) => {
+  console.error('Promise không được xử lý:', event.reason);
+  // Gửi lỗi đến logging service
+});
+```
+
+## Best Practices
+
+### 1. Luôn xử lý lỗi
+
+```javascript
+// SAI
+async function fetchData() {
+  const response = await fetch('/api/data');
+  return response.json();
+}
+
+// ĐÚNG
+async function fetchData() {
+  try {
+    const response = await fetch('/api/data');
+    if (!response.ok) throw new Error('Request failed');
+    return await response.json();
+  } catch (error) {
+    console.error('Lỗi:', error);
+    return null; // hoặc throw lại
+  }
+}
+```
+
+### 2. Cung cấp thông tin lỗi hữu ích
+
+```javascript
+class APIError extends Error {
+  constructor(message, statusCode, details) {
+    super(message);
+    this.statusCode = statusCode;
+    this.details = details;
+    this.name = 'APIError';
+  }
+}
+
+throw new APIError(
+  'Không thể lấy dữ liệu',
+  404,
+  { endpoint: '/api/users', userId: 123 }
+);
+```
+
+### 3. Logging lỗi
+
+```javascript
+function logError(error, context) {
+  console.error('Lỗi:', {
+    message: error.message,
+    stack: error.stack,
+    context: context,
+    timestamp: new Date().toISOString()
+  });
+  
+  // Gửi đến logging service
+  // sendToLoggingService(error, context);
+}
+
+try {
+  riskyOperation();
+} catch (error) {
+  logError(error, { operation: 'riskyOperation' });
+}
+```
+
+### 4. Graceful Degradation
+
+```javascript
+async function loadUserPreferences() {
+  try {
+    const prefs = await fetch('/api/preferences').then(r => r.json());
+    return prefs;
+  } catch (error) {
+    console.warn('Không thể tải preferences, dùng mặc định');
+    return getDefaultPreferences();
+  }
+}
+```
+
+## Kết luận
+
+Xử lý lỗi đúng cách là rất quan trọng để tạo ra ứng dụng ổn định và đáng tin cậy. Hãy luôn xử lý lỗi một cách rõ ràng và cung cấp thông tin hữu ích cho người dùng và developers.
+

@@ -6,12 +6,20 @@ import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import App from "@/components/app";
 
-const lexend = Lexend({ subsets: ["latin"], variable: "--font-lexend" });
+const lexend = Lexend({ 
+  subsets: ["latin", "vietnamese"], 
+  variable: "--font-lexend" 
+});
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | Mdx Blog Template",
-    default: "Mdx Blog Template",
+    template: "%s | Code & Learn",
+    default: "Code & Learn",
+  },
+  icons: {
+    icon: "/images/logo/logo.png?v=2",
+    shortcut: "/images/logo/logo.png?v=2",
+    apple: "/images/logo/logo.png?v=2",
   },
 };
 
@@ -26,7 +34,7 @@ export default function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="vi" className="dark">
       <body
         className={cn(
           "min-h-screen antialiased font-lexend bg-background",
