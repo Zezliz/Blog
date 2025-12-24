@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+// eslint-disable-next-line camelcase
 import { Lexend, Roboto_Mono } from "next/font/google";
 import "@/styles/globals.css";
 import { ReactNode } from "react";
