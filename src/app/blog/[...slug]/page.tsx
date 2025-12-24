@@ -79,17 +79,19 @@ export default async function BlogPageItem({ params }: BlogPageItemProps) {
 
         {blog.author && (
           <div className="mt-4 flex space-x-4">
-            <Image
-              src={siteConfig.authorImage}
-              alt={blog.author}
-              width={42}
-              height={42}
-              className="rounded-full bg-white"
-            />
+            <div className="h-[42px] w-[42px] overflow-hidden rounded-full border-2 border-background">
+              <Image
+                src={siteConfig.authorImage}
+                alt={blog.author}
+                width={42}
+                height={42}
+                className="h-full w-full object-cover"
+              />
+            </div>
             <div className="flex-1 text-left leading-tight">
               <p className="font-medium">{blog.author}</p>
               <p className="text-[12px] text-muted-foreground">
-                @{blog.author}
+                @Zezliz
               </p>
             </div>
           </div>

@@ -1,9 +1,19 @@
 [data-rehype-pretty-code-figure] pre {
-  @apply px-0;
+  @apply px-0 font-code;
+  font-feature-settings: normal;
+  font-variant-ligatures: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 [data-rehype-pretty-code-figure] code {
-  @apply text-sm !leading-loose md:text-base border-0 p-0;
+  @apply text-sm !leading-loose md:text-base border-0 p-0 font-code;
+  font-feature-settings: normal;
+  font-variant-ligatures: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 [data-rehype-pretty-code-figure] code[data-line-numbers] {

@@ -32,7 +32,14 @@ const config = {
           "Arial",
           "sans-serif",
         ],
-        code: ["var(--font-code)", ...fontFamily.sans],
+        code: [
+          "var(--font-roboto-mono)",
+          "Roboto Mono",
+          "Consolas",
+          "Monaco",
+          "Courier New",
+          "monospace",
+        ],
       },
       colors: {
         border: "hsl(var(--border))",
