@@ -11,13 +11,11 @@ import {
   Code,
   Network,
   Database,
-  Server,
   GitBranch,
   BookOpen,
   GraduationCap,
   Calendar,
 } from "lucide-react";
-import CertificateCard from "@/components/certificate-card";
 
 export default function AboutPage() {
   return (
@@ -149,8 +147,8 @@ export default function AboutPage() {
                 thông tin, đặc biệt là về mạng máy tính và lập trình.
               </p>
               <p className="text-sm italic text-muted-foreground">
-                "Học tập là một hành trình không có điểm dừng. Mỗi ngày là một
-                cơ hội để khám phá và phát triển."
+                &ldquo;Học tập là một hành trình không có điểm dừng. Mỗi ngày là một
+                cơ hội để khám phá và phát triển.&rdquo;
               </p>
             </div>
           </div>

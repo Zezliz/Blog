@@ -3,7 +3,7 @@ import { siteConfig } from "@/config/site";
 import { SOCIALS } from "@/constants";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { ArrowRight, BookOpen, Sparkles, Code, GraduationCap } from "lucide-react";
+import { ArrowRight, BookOpen, Code, GraduationCap } from "lucide-react";
 
 export default function Home() {
   return (
@@ -15,7 +15,7 @@ export default function Home() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[500px] rounded-full bg-primary/5 blur-3xl"></div>
         
         {/* Grid pattern overlay */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] [background-size:24px_24px]"></div>
       </div>
 
       <div className="container relative z-10 flex max-w-6xl flex-col items-center gap-10 text-center">
