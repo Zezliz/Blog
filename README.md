@@ -2,8 +2,6 @@
 
 Blog cá nhân được xây dựng với Next.js 14 và Velite. Sử dụng MDX để viết bài blog với khả năng nhúng React components.
 
-<img src="screenshot/mdx-blog-template.jpg" alt="Blog Preview" width="100%">
-
 ## Mục Lục
 
 - [Tính Năng](#tính-năng)
