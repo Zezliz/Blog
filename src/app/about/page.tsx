@@ -31,15 +31,15 @@ export default function AboutPage() {
         <div className="w-full lg:w-[380px] lg:flex-shrink-0">
           <div className="relative overflow-hidden rounded-lg border border-border bg-card shadow-lg">
             {/* Header với gradient */}
-            <div className="bg-gradient-to-r from-primary/20 to-accent/20 px-6 pt-16 pb-4">
+            <div className="bg-gradient-to-r from-primary/20 to-accent/20 px-6 pt-28 pb-6">
               <div className="flex flex-col items-center">
-                <div className="relative mb-4">
-                  <div className="absolute inset-0 rounded-full bg-primary/20 blur-xl"></div>
-                  <div className="relative h-[100px] w-[100px] overflow-hidden rounded-full border-4 border-background shadow-lg">
+                <div className="relative mb-5">
+                  <div className="absolute inset-0 rounded-full bg-primary/20 blur-xl scale-110"></div>
+                  <div className="relative h-[200px] w-[200px] overflow-hidden rounded-full border-4 border-background shadow-xl">
                     <Image
                       src={siteConfig.authorImage}
-                      width={100}
-                      height={100}
+                      width={200}
+                      height={200}
                       alt={siteConfig.name}
                       className="h-full w-full object-cover"
                     />
